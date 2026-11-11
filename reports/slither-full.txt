@@ -1,0 +1,90 @@
+Multiple frameworks detected: solc, Solc-json. Using solc (highest priority). Use --compile-force-framework to override.
+'solc --version' running
+'solc contracts/CommunityVault.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --allow-paths .,/mnt/c/Users/Dell/Downloads/SCS_Unit4_Lab_Completed/SCS_Unit4_Lab_Completed/contracts' running
+INFO:Detectors:
+Detector: reentrancy-eth
+Reentrancy in CommunityVault.withdraw(uint256) (contracts/CommunityVault.sol#49-64):
+	External calls:
+	- (ok,None) = msg.sender.call{value: amount}() (contracts/CommunityVault.sol#56)
+	State variables written after the call(s):
+	- balances[msg.sender] -= amount (contracts/CommunityVault.sol#60)
+	CommunityVault.balances (contracts/CommunityVault.sol#17) can be used in cross function reentrancies:
+	- CommunityVault.balances (contracts/CommunityVault.sol#17)
+	- CommunityVault.deposit() (contracts/CommunityVault.sol#37-47)
+	- CommunityVault.pendingReward(address) (contracts/CommunityVault.sol#66-69)
+	- CommunityVault.withdraw(uint256) (contracts/CommunityVault.sol#49-64)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1
+INFO:Detectors:
+Detector: divide-before-multiply
+CommunityVault.pendingReward(address) (contracts/CommunityVault.sol#66-69) performs a multiplication on the result of a division:
+	- daysHeld = (block.timestamp - depositedAt[user]) / 86400 (contracts/CommunityVault.sol#67)
+	- (balances[user] / 10_000) * rewardRatePerDay * daysHeld (contracts/CommunityVault.sol#68)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply
+INFO:Detectors:
+Detector: incorrect-equality
+CommunityVault.deposit() (contracts/CommunityVault.sol#37-47) uses a dangerous strict equality:
+	- require(bool,string)(address(this).balance - msg.value == totalDeposits + rewardPool,accounting mismatch) (contracts/CommunityVault.sol#39-42)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+INFO:Detectors:
+Detector: events-access
+CommunityVault.transferOwnership(address) (contracts/CommunityVault.sol#95-97) should emit an event for: 
+	- owner = newOwner (contracts/CommunityVault.sol#96) 
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-events-access-control
+INFO:Detectors:
+Detector: events-maths
+CommunityVault.fundRewards() (contracts/CommunityVault.sol#83-85) should emit an event for: 
+	- rewardPool += msg.value (contracts/CommunityVault.sol#84) 
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-events-arithmetic
+INFO:Detectors:
+Detector: missing-zero-check
+CommunityVault.constructor(address)._treasury (contracts/CommunityVault.sol#29) lacks a zero-check on :
+		- treasury = _treasury (contracts/CommunityVault.sol#31)
+CommunityVault.setTreasury(address).newTreasury (contracts/CommunityVault.sol#91) lacks a zero-check on :
+		- treasury = newTreasury (contracts/CommunityVault.sol#92)
+CommunityVault.transferOwnership(address).newOwner (contracts/CommunityVault.sol#95) lacks a zero-check on :
+		- owner = newOwner (contracts/CommunityVault.sol#96)
+CommunityVault.sweepSurplus(address).to (contracts/CommunityVault.sol#103) lacks a zero-check on :
+		- to.transfer(surplus) (contracts/CommunityVault.sol#105)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-zero-address-validation
+INFO:Detectors:
+Detector: reentrancy-benign
+Reentrancy in CommunityVault.withdraw(uint256) (contracts/CommunityVault.sol#49-64):
+	External calls:
+	- (ok,None) = msg.sender.call{value: amount}() (contracts/CommunityVault.sol#56)
+	State variables written after the call(s):
+	- totalDeposits -= amount (contracts/CommunityVault.sol#62)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3
+INFO:Detectors:
+Detector: reentrancy-events
+Reentrancy in CommunityVault.claimReward() (contracts/CommunityVault.sol#71-79):
+	External calls:
+	- (ok,None) = msg.sender.call{value: reward}() (contracts/CommunityVault.sol#76)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (contracts/CommunityVault.sol#78)
+Reentrancy in CommunityVault.withdraw(uint256) (contracts/CommunityVault.sol#49-64):
+	External calls:
+	- (ok,None) = msg.sender.call{value: amount}() (contracts/CommunityVault.sol#56)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (contracts/CommunityVault.sol#63)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4
+INFO:Detectors:
+Detector: timestamp
+CommunityVault.deposit() (contracts/CommunityVault.sol#37-47) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(address(this).balance - msg.value == totalDeposits + rewardPool,accounting mismatch) (contracts/CommunityVault.sol#39-42)
+CommunityVault.withdraw(uint256) (contracts/CommunityVault.sol#49-64) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp >= depositedAt[msg.sender] + LOCK_PERIOD,still locked) (contracts/CommunityVault.sol#51-54)
+CommunityVault.claimReward() (contracts/CommunityVault.sol#71-79) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(reward > 0 && reward <= rewardPool,nothing to claim) (contracts/CommunityVault.sol#73)
+	- require(bool,string)(ok,transfer failed) (contracts/CommunityVault.sol#77)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+INFO:Detectors:
+Detector: low-level-calls
+Low level call in CommunityVault.withdraw(uint256) (contracts/CommunityVault.sol#49-64):
+	- (ok,None) = msg.sender.call{value: amount}() (contracts/CommunityVault.sol#56)
+Low level call in CommunityVault.claimReward() (contracts/CommunityVault.sol#71-79):
+	- (ok,None) = msg.sender.call{value: reward}() (contracts/CommunityVault.sol#76)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+INFO:Slither:contracts/CommunityVault.sol analyzed (1 contracts with 102 detectors), 17 result(s) found

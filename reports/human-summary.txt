@@ -1,0 +1,21 @@
+Multiple frameworks detected: solc, Solc-json. Using solc (highest priority). Use --compile-force-framework to override.
+'solc --version' running
+'solc contracts/CommunityVault.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --allow-paths .,/mnt/c/Users/Dell/Downloads/SCS_Unit4_Lab_Completed/SCS_Unit4_Lab_Completed/contracts' running
+INFO:Printers:
+Compiled with solc
+Total number of contracts in source files: 1
+Source lines of code (SLOC) in source files: 79
+Number of  assembly lines: 0
+Number of optimization issues: 0
+Number of informational issues: 2
+Number of low issues: 12
+Number of medium issues: 2
+Number of high issues: 1
+
++----------------+-------------+------+------------+--------------+-------------+
+| Name           | # functions | ERCS | ERC20 info | Complex code | Features    |
++----------------+-------------+------+------------+--------------+-------------+
+| CommunityVault | 12          |      |            | No           | Receive ETH |
+|                |             |      |            |              | Send ETH    |
++----------------+-------------+------+------------+--------------+-------------+
+INFO:Slither:contracts/CommunityVault.sol analyzed (1 contracts)

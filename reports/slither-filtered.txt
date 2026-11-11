@@ -1,0 +1,28 @@
+Multiple frameworks detected: solc, Solc-json. Using solc (highest priority). Use --compile-force-framework to override.
+'solc --version' running
+'solc contracts/CommunityVault.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --allow-paths .,/mnt/c/Users/Dell/Downloads/SCS_Unit4_Lab_Completed/SCS_Unit4_Lab_Completed/contracts' running
+INFO:Detectors:
+Detector: reentrancy-eth
+Reentrancy in CommunityVault.withdraw(uint256) (contracts/CommunityVault.sol#49-64):
+	External calls:
+	- (ok,None) = msg.sender.call{value: amount}() (contracts/CommunityVault.sol#56)
+	State variables written after the call(s):
+	- balances[msg.sender] -= amount (contracts/CommunityVault.sol#60)
+	CommunityVault.balances (contracts/CommunityVault.sol#17) can be used in cross function reentrancies:
+	- CommunityVault.balances (contracts/CommunityVault.sol#17)
+	- CommunityVault.deposit() (contracts/CommunityVault.sol#37-47)
+	- CommunityVault.pendingReward(address) (contracts/CommunityVault.sol#66-69)
+	- CommunityVault.withdraw(uint256) (contracts/CommunityVault.sol#49-64)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1
+INFO:Detectors:
+Detector: divide-before-multiply
+CommunityVault.pendingReward(address) (contracts/CommunityVault.sol#66-69) performs a multiplication on the result of a division:
+	- daysHeld = (block.timestamp - depositedAt[user]) / 86400 (contracts/CommunityVault.sol#67)
+	- (balances[user] / 10_000) * rewardRatePerDay * daysHeld (contracts/CommunityVault.sol#68)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply
+INFO:Detectors:
+Detector: incorrect-equality
+CommunityVault.deposit() (contracts/CommunityVault.sol#37-47) uses a dangerous strict equality:
+	- require(bool,string)(address(this).balance - msg.value == totalDeposits + rewardPool,accounting mismatch) (contracts/CommunityVault.sol#39-42)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+INFO:Slither:contracts/CommunityVault.sol analyzed (1 contracts with 64 detectors), 3 result(s) found
